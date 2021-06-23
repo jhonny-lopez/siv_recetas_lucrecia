@@ -1,0 +1,34 @@
+﻿@using Web.Models.States; 
+
+@model IndexViewModel
+
+@{ 
+    ViewData["Title"] = "Departamentos";
+}
+
+<h1>Departamentos</h1>
+<p>Aquí aparecerán listados los departamentos de mi base de datos.</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Nombre</td>
+            <td>Acciones</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var state in Model.States)
+        {
+            <tr>
+                <td>@state.Id</td>
+                <td>@state.Name</td>
+                <td>
+                    <a href="@Url.Action("Details", "States", new { id = state.Id })">Ver detalles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 
+
+
