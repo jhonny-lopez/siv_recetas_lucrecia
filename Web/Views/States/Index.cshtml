@@ -9,6 +9,8 @@
 <h1>Departamentos</h1>
 <p>Aquí aparecerán listados los departamentos de mi base de datos.</p>
 
+<a class="btn btn-outline-secondary" href="@Url.Action("Create", "States")">Agregar departamento</a>
+
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -24,7 +26,10 @@
                 <td>@state.Id</td>
                 <td>@state.Name</td>
                 <td>
-                    <a href="@Url.Action("Details", "States", new { id = state.Id })">Ver detalles</a>
+                    <a href="@Url.Action("Details", "States", new { id = state.Id })">Ver detalles</a> @*/States/Details/1004*@
+                    | <a href="@Url.Action("Edit", "States", new { id = state.Id })">Editar</a>
+                    | <a href="@Url.Action("TestParameters", "States", new { id = state.Id, name = state.Name, date = DateTime.Now })">Probar parámetros</a> @*/States/Edit/2?name=Cauca&date=*@
+
                 </td>
             </tr>
         }

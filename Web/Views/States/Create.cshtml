@@ -1,0 +1,14 @@
+﻿@model Web.Models.States.CreateStateViewModel
+
+<h1>Nuevo departamento</h1>
+
+<form class="form" method="post" action="/States/Create">
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="Name">Nombre:</label>
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+</form>

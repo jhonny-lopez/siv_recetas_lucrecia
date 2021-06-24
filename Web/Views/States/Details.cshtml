@@ -23,6 +23,11 @@
     </dl>
 </div>
 
+<form action="/States/Delete/@Model.Id" method="post">
+    <button class="btn btn-danger" id="delete-state" type="button">Eliminar con JavaScript</button>
+    <button class="btn btn-danger" type="submit">Eliminar con POST</button>
+</form>
+
 <h4>Ciudades</h4>
 
 <table class="table table-bordered table-striped">
@@ -47,3 +52,22 @@
     @Html.ActionLink("Editar", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Volver a la lista de departamentos</a>
 </div>
+
+<script type="text/javascript">
+    document.querySelector('#delete-state').addEventListener('click', function (event) {
+        if (confirm("¿Realmente desea eliminar este departamento?")) {
+            event.preventDefault();
+            fetch('@Url.Action("DeleteWithScript", "States", new { id = Model.Id })', {
+                method: "POST",
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("El departamento se eliminó exitosamente");
+                    window.location.href = "@Url.Action("Index")";
+                }
+                else {
+                    alert("No se pudo eliminar el departamento");
+                }
+            });
+        }
+    })
+</script>
