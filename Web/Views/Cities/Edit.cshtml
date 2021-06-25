@@ -1,0 +1,18 @@
+﻿@model Web.Models.Cities.EditCityViewModel
+
+<h1>@Model.Name - Editar</h1>
+
+<form action="/Cities/Edit" method="post">
+    @Html.HiddenFor(model => model.Id)
+    <div class="form-row">
+        <div class="form-group col-sm-6">
+            @Html.LabelFor(model => model.Name)
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control ", required="" })
+        </div>
+        <div class="form-group col-sm-6">
+            @Html.LabelFor(model => model.StateId)
+            @Html.DropDownListFor(model => model.StateId, Model.StatesList, "- Seleccione un departamento -", new { @class = "form-control ", required="" })
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>

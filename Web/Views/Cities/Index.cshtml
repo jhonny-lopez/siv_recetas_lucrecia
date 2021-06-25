@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Ciudades</h1>
+<h1>@Resources.Cities.CitiesResources.Title</h1>
 
 <p>
-    <a asp-action="Create">Agregar ciudad</a>
+    <a class="btn btn-outline-secondary" asp-action="Create">@Resources.Cities.CitiesResources.Add</a>
 </p>
 <table class="table">
     <thead>
@@ -16,32 +16,45 @@
                 Id
             </th>
             <th>
-                Nombre
+                @Resources.Cities.CitiesResources.Name
             </th>
             <th>
-                Departamento
+                @Resources.Cities.CitiesResources.StateId
             </th>
-            <th></th>
+            <th>
+
+            </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Cities) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StateName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Cities)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StateName)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Ver detalles", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="@Url.Action("Index", "Cities", new { PageIndex = Model.PageIndex - Model.PageSize, PageSize = Model.PageSize  })"><<</a></li>
+        @for (int i = Model.PageIndex; i < Model.PageIndex + 10; i++)
+        {
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", "Cities", new { PageIndex = Model.PageSize * i, PageSize = Model.PageSize  })">@(i + 1)</a></li>
+        }
+        <li class="page-item"><a class="page-link" href="@Url.Action("Index", "Cities", new { PageIndex = Model.PageIndex + Model.PageSize, PageSize = Model.PageSize  })">>></a></li>
+    </ul>
+</nav>

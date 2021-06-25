@@ -1,5 +1,6 @@
 ﻿using Domain.Regions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
@@ -12,19 +13,24 @@ namespace Web.Controllers
 {
     public class CitiesController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index([FromQuery]IndexViewModel model)
         {
-            IndexViewModel model = new IndexViewModel();
-
             var context = GetDatabaseService();
-
+            
             model.Cities = context.Cities
+                .OrderBy(it => it.State.Name)
+                    .ThenBy(it => it.Name)
+                .Skip(model.PageIndex)
+                .Take(model.PageSize)
                 .Select(city => new CityModel()
                 {
                     Id = city.Id,
                     Name = city.Name,
                     StateName = city.State.Name
-                }).ToList();
+                })
+                .ToList();
+
+            model.TotalRecords = context.Cities.Count();
 
             return View(model);
         }
@@ -40,7 +46,7 @@ namespace Web.Controllers
                 .OrderBy(it => it.Name)
                 .ToList();
 
-            model.StatesList = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(states, "Id", "Name");
+            model.StatesList = new SelectList(states, "Id", "Name");
 
             return View(model);
         }
@@ -50,20 +56,98 @@ namespace Web.Controllers
         {
             var context = GetDatabaseService();
 
-            City city = new City();
+            if (ModelState.IsValid)
+            {
+                City city = new City();
+                city.Name = model.Name;
+                city.StateId = model.StateId;
+
+                context.Cities.Add(city);
+                context.SaveChanges();
+
+                return RedirectToAction("Index"); 
+            }
+
+            var states = context.States
+                .OrderBy(it => it.Name)
+                .ToList();
+
+            model.StatesList = new SelectList(states, "Id", "Name");
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var context = GetDatabaseService();
+
+            var city = context.Cities.Find(id);
+
+            var states = context.States
+                .OrderBy(state => state.Name)
+                .ToList();
+
+            EditCityViewModel model = new EditCityViewModel();
+            model.Id = city.Id;
+            model.Name = city.Name;
+            model.StateId = city.StateId;
+
+            model.StatesList = new SelectList(states, "Id", "Name", city.StateId);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EditCityViewModel model)
+        {
+            var context = GetDatabaseService();
+
+            var city = context.Cities.Find(model.Id);
+
             city.Name = model.Name;
             city.StateId = model.StateId;
 
-            context.Cities.Add(city);
             context.SaveChanges();
 
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            DeleteCityViewModel model = new DeleteCityViewModel();
+
+            var context = GetDatabaseService();
+
+            var city = context.Cities.Find(id);
+
+            model.Id = city.Id;
+            model.Name = city.Name;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(DeleteCityViewModel model)
+        {
+            var context = GetDatabaseService();
+
+            var city = context.Cities.Find(model.Id);
+
+            context.Cities.Remove(city);
+
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
         private DatabaseService GetDatabaseService()
         {
             string connectionString = "Server=localhost;Database=RecetasLucrecia;User id=sa;Password=m4l4l3ch3";
-            var options = SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
+            var options = SqlServerDbContextOptionsExtensions
+                .UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
             DatabaseService context = new DatabaseService(options);
 
             return context;

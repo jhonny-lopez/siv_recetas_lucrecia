@@ -1,0 +1,11 @@
+﻿@model Web.Models.Cities.DeleteCityViewModel
+
+<h1>@Model.Name - @Resources.Cities.CitiesResources.Delete</h1>
+
+<p>@Resources.Cities.CitiesResources.ConfirmDelete</p>
+
+<form action="/Cities/Delete" method="post">
+    @Html.HiddenFor(model => model.Id)
+    <button type="submit" class="btn btn-danger">@Resources.General.GeneralResources.Yes</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">@Resources.General.GeneralResources.Cancel</a>
+</form>
