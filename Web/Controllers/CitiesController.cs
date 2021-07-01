@@ -16,8 +16,8 @@ namespace Web.Controllers
         public IActionResult Index([FromQuery]IndexViewModel model)
         {
             var context = GetDatabaseService();
-            
-            model.Cities = context.Cities
+
+            var query = context.Cities
                 .OrderBy(it => it.State.Name)
                     .ThenBy(it => it.Name)
                 .Skip(model.PageIndex)
@@ -27,9 +27,10 @@ namespace Web.Controllers
                     Id = city.Id,
                     Name = city.Name,
                     StateName = city.State.Name
-                })
-                .ToList();
+                });
 
+            var querySQL = query.ToQueryString();
+            model.Cities = query.ToList();
             model.TotalRecords = context.Cities.Count();
 
             return View(model);
@@ -43,6 +44,7 @@ namespace Web.Controllers
             var context = GetDatabaseService();
 
             var states = context.States
+                    .Include(it => it.Cities)
                 .OrderBy(it => it.Name)
                 .ToList();
 
