@@ -16,12 +16,7 @@ namespace Persistence
         {
 
         }
-
-        public DatabaseService(DbContextOptions<DatabaseService> options) : base(options)
-        {
-
-        }
-
+        
         public DatabaseService(DbContextOptions options) : base(options)
         {
 

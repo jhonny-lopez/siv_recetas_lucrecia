@@ -1,0 +1,16 @@
+﻿@model Application.Ingredients.Queries.GetIngredients.IngredientsListModel
+
+<div class="row">
+
+    @foreach (var ingredient in Model.Ingredients)
+    {
+        <div class="card">
+            <img class="card-img-top" src="@ingredient.ImageUrl" style="max-height: 300px; width: auto" alt="@ingredient.Name">
+            <div class="card-body">
+                <h5 class="card-title">@ingredient.Name</h5>
+                <a href="@Url.Action("Details", new { id = ingredient.Id })" class="btn btn-primary">Ver detalles</a>
+            </div>
+        </div>
+    }
+
+</div>

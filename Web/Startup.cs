@@ -1,4 +1,9 @@
+using Application.Ingredients.Commands.CreateIngredient;
+using Application.Ingredients.Commands.UpdateIngredient;
+using Application.Ingredients.Queries.GetIngredientDetail;
+using Application.Ingredients.Queries.GetIngredients;
 using Application.Interfaces;
+using Infrastructure.Notifications;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,7 +35,15 @@ namespace Web
         {
             services.AddControllersWithViews();
 
-            services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService)));
+            services.AddDbContext<DatabaseService>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("RecetasLucrecia"))
+            );
+
+            services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Singleton));
+            services.AddTransient(typeof(IGetIngredientsQuery), typeof(GetIngredientsQuery));
+            services.AddTransient(typeof(IGetIngredientDetailQuery), typeof(GetIngredientDetailQuery));
+            services.AddTransient(typeof(ICreateIngredientCommand), typeof(CreateIngredientCommand));
+            services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
