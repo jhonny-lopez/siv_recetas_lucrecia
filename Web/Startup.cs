@@ -3,6 +3,7 @@ using Application.Ingredients.Commands.UpdateIngredient;
 using Application.Ingredients.Queries.GetIngredientDetail;
 using Application.Ingredients.Queries.GetIngredients;
 using Application.Interfaces;
+using Common.Configuration;
 using Infrastructure.Notifications;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,11 +40,19 @@ namespace Web
                 options.UseSqlServer(Configuration.GetConnectionString("RecetasLucrecia"))
             );
 
-            services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Singleton));
+            string appKey = Configuration.GetValue<string>("General:SMSProvider:AppKey");
+            bool isBillingEnabled = Configuration.GetValue<bool>("IsBillingEnabled");
+            int defaultPort = Configuration.GetValue<int>("DefaultPort");
+
+            services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Transient));
             services.AddTransient(typeof(IGetIngredientsQuery), typeof(GetIngredientsQuery));
             services.AddTransient(typeof(IGetIngredientDetailQuery), typeof(GetIngredientDetailQuery));
             services.AddTransient(typeof(ICreateIngredientCommand), typeof(CreateIngredientCommand));
             services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
+
+            services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));
+            services.Configure<MailProviderOptions>(Configuration.GetSection(MailProviderOptions.SectionName));
+            services.Configure<GeneralOptions>(Configuration.GetSection(GeneralOptions.SectionName));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

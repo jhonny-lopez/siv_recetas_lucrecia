@@ -3,8 +3,10 @@ using Application.Ingredients.Commands.UpdateIngredient;
 using Application.Ingredients.Queries.GetIngredientDetail;
 using Application.Ingredients.Queries.GetIngredients;
 using Application.Interfaces;
+using Common.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Persistence;
 using System;
 using System.Collections.Generic;
@@ -20,21 +22,27 @@ namespace Web.Controllers
         private readonly IGetIngredientDetailQuery _getDetailQuery;
         private readonly ICreateIngredientCommand _createCommand;
         private readonly IUpdateIngredientCommand _updateCommand;
+        private readonly GeneralOptions _generalOptions;
 
         public IngredientsController(IGetIngredientsQuery getQuery, 
             IGetIngredientDetailQuery getDetailQuery, 
             ICreateIngredientCommand createCommand, 
-            IUpdateIngredientCommand updateCommand)
+            IUpdateIngredientCommand updateCommand,
+            IOptions<GeneralOptions> generalOptions)
         {
             _getQuery = getQuery;
             _getDetailQuery = getDetailQuery;
             _createCommand = createCommand;
             _updateCommand = updateCommand;
+            _generalOptions = generalOptions.Value;
         }
 
         public IActionResult Index()
         {
             var model = _getQuery.Execute();
+
+            string appKey = _generalOptions.SMSProvider.AppKey;
+            Console.WriteLine(appKey);
 
             return View(model);
         }
