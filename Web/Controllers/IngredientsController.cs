@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Common.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistence;
 using System;
@@ -23,18 +24,20 @@ namespace Web.Controllers
         private readonly ICreateIngredientCommand _createCommand;
         private readonly IUpdateIngredientCommand _updateCommand;
         private readonly GeneralOptions _generalOptions;
+        private readonly ILogger _logger;
 
-        public IngredientsController(IGetIngredientsQuery getQuery, 
-            IGetIngredientDetailQuery getDetailQuery, 
-            ICreateIngredientCommand createCommand, 
+        public IngredientsController(IGetIngredientsQuery getQuery,
+            IGetIngredientDetailQuery getDetailQuery,
+            ICreateIngredientCommand createCommand,
             IUpdateIngredientCommand updateCommand,
-            IOptions<GeneralOptions> generalOptions)
+            IOptions<GeneralOptions> generalOptions, ILogger<IngredientsController> logger)
         {
             _getQuery = getQuery;
             _getDetailQuery = getDetailQuery;
             _createCommand = createCommand;
             _updateCommand = updateCommand;
             _generalOptions = generalOptions.Value;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -68,6 +71,8 @@ namespace Web.Controllers
         public IActionResult Create(CreateIngredientModel model)
         {
             _createCommand.Execute(model);
+
+            _logger.LogWarning($"Se creó un nuevo ingrediente ({model.Name}) a las {DateTime.Now}");
 
             return RedirectToAction("Index");
         }

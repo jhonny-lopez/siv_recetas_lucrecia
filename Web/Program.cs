@@ -18,6 +18,22 @@ namespace Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    if (hostingContext.HostingEnvironment.IsDevelopment())
+                    {
+                        logging.ClearProviders();
+                        logging.AddConsole();
+                        logging.AddEventLog();
+                    }
+                    else if (hostingContext.HostingEnvironment.IsProduction())
+                    {
+                        logging.ClearProviders();
+                        
+                    }
+
+                    
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

@@ -44,11 +44,18 @@ namespace Web
             bool isBillingEnabled = Configuration.GetValue<bool>("IsBillingEnabled");
             int defaultPort = Configuration.GetValue<int>("DefaultPort");
 
+            string appName = Configuration.GetValue<string>("ApplicationName");
+
+            string customerName = Configuration.GetValue<string>("Customer:Name");
+            string customerNit = Configuration.GetValue<string>("Customer:NIT");
+            string otherConnectionString = Configuration.GetValue<string>("ASPNETCORE_CONNECTIONSTRING");
+
             services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Transient));
             services.AddTransient(typeof(IGetIngredientsQuery), typeof(GetIngredientsQuery));
             services.AddTransient(typeof(IGetIngredientDetailQuery), typeof(GetIngredientDetailQuery));
             services.AddTransient(typeof(ICreateIngredientCommand), typeof(CreateIngredientCommand));
             services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
+
 
             services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));
             services.Configure<MailProviderOptions>(Configuration.GetSection(MailProviderOptions.SectionName));
