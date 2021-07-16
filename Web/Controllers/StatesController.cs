@@ -25,7 +25,12 @@ namespace Web.Controllers
         {
             var state = GetStates()
                 .Where(s => s.Id == id)
-                .First();
+                .FirstOrDefault();
+
+            if (state == null)
+            {
+                return NotFound();
+            }
 
             StateDetailsViewModel model = new StateDetailsViewModel();
             model.Id = state.Id;

@@ -11,11 +11,13 @@ namespace Application.Events.Commands.RegisterContactInEventCommand
     {
         private readonly IDatabaseService _databaseService;
         private readonly INotificationsFactory _notificationsFactory;
+        private readonly IStockService _stockService;
 
-        public RegisterContactInEventCommand(IDatabaseService databaseService, INotificationsFactory notificationsFactory)
+        public RegisterContactInEventCommand(IDatabaseService databaseService, INotificationsFactory notificationsFactory, IStockService stockService)
         {
             _databaseService = databaseService;
             _notificationsFactory = notificationsFactory;
+            _stockService = stockService;
         }
 
         public void Execute(Guid eventId, Guid contactId)
@@ -38,6 +40,8 @@ namespace Application.Events.Commands.RegisterContactInEventCommand
             INotifications notifications = _notificationsFactory.Build(contact);
 
             notifications.Notify(message);
+
+            _stockService.RequestEventShirt();
         }
     }
 }

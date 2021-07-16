@@ -33,5 +33,18 @@ namespace Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult SetLanguage(string language)
+        {
+            //Escribiendo el valor de la cookie language
+            Response.Cookies.Append("language", language);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult ContentNotFound()
+        {
+            return View();
+        }
     }
 }

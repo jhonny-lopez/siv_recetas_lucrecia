@@ -5,6 +5,7 @@ using Application.Ingredients.Queries.GetIngredients;
 using Application.Interfaces;
 using Common.Configuration;
 using Infrastructure.Notifications;
+using Infrastructure.Stock;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,6 +20,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Extensions;
 
 namespace Web
 {
@@ -35,6 +37,10 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration.GetConnectionString("RecetasLucrecia"));
+            services.AddHealthChecksUI()
+                .AddSqlServerStorage(Configuration.GetConnectionString("RecetasLucrecia"));
 
             services.AddDbContext<DatabaseService>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("RecetasLucrecia"))
@@ -55,6 +61,7 @@ namespace Web
             services.AddTransient(typeof(IGetIngredientDetailQuery), typeof(GetIngredientDetailQuery));
             services.AddTransient(typeof(ICreateIngredientCommand), typeof(CreateIngredientCommand));
             services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
+            services.AddTransient(typeof(IStockService), typeof(NikeStockService));
 
 
             services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));
@@ -65,9 +72,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
-
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -77,22 +82,36 @@ namespace Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Request.Path = "/Home/ContentNotFound";
+                    await next();
+                }
+            });
+
             app.UseAuthorization();
+
+            app.UseRequestCulture();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHealthChecksUI();
             });
-
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
         }
     }
 }
