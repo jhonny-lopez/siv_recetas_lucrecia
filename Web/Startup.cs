@@ -4,11 +4,14 @@ using Application.Ingredients.Queries.GetIngredientDetail;
 using Application.Ingredients.Queries.GetIngredients;
 using Application.Interfaces;
 using Common.Configuration;
+using HealthChecks.UI.Client;
 using Infrastructure.Notifications;
 using Infrastructure.Stock;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Email;
 using Web.Extensions;
 
 namespace Web
@@ -37,10 +41,13 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddHealthChecks()
-                .AddSqlServer(Configuration.GetConnectionString("RecetasLucrecia"));
+                .AddSqlServer(Configuration["ConnectionStrings:RecetasLucrecia"], 
+                "SELECT 1",
+                "Database");
             services.AddHealthChecksUI()
-                .AddSqlServerStorage(Configuration.GetConnectionString("RecetasLucrecia"));
+                .AddInMemoryStorage();
 
             services.AddDbContext<DatabaseService>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("RecetasLucrecia"))
@@ -62,6 +69,7 @@ namespace Web
             services.AddTransient(typeof(ICreateIngredientCommand), typeof(CreateIngredientCommand));
             services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
             services.AddTransient(typeof(IStockService), typeof(NikeStockService));
+            services.AddTransient(typeof(IEmailSender), typeof(EmailSender));
 
 
             services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));
@@ -89,18 +97,8 @@ namespace Web
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.Use(async (context, next) =>
-            {
-                await next();
-
-                if (context.Response.StatusCode == 404)
-                {
-                    context.Request.Path = "/Home/ContentNotFound";
-                    await next();
-                }
-            });
-
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseRequestCulture();
@@ -110,7 +108,12 @@ namespace Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHealthChecks("/api/health", new HealthCheckOptions
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
                 endpoints.MapHealthChecksUI();
+                endpoints.MapRazorPages();
             });
         }
     }

@@ -27,6 +27,9 @@ namespace Common.Configuration
         public string WebAPIUrl { get; set; }
         public bool IsBillingEnabled { get; set; }
         public int DefaultPort { get; set; }
+        public string SendGridApiKey { get; set; }
+        public string FromEmail { get; set; }
+        public string FromName { get; set; }
         public SMSProviderOptions SMSProvider { get; set; }
         public MailProviderOptions MailProvider { get; set; }
     }
