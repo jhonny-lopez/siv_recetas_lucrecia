@@ -30,6 +30,7 @@ namespace Common.Configuration
         public string SendGridApiKey { get; set; }
         public string FromEmail { get; set; }
         public string FromName { get; set; }
+        public string BaseUrl { get; set; }
         public SMSProviderOptions SMSProvider { get; set; }
         public MailProviderOptions MailProvider { get; set; }
     }

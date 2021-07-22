@@ -1,3 +1,5 @@
+using Application.Employees.Commands.CreateEmployee;
+using Application.Employees.Queries.GetEmployeesList;
 using Application.Ingredients.Commands.CreateIngredient;
 using Application.Ingredients.Commands.UpdateIngredient;
 using Application.Ingredients.Queries.GetIngredientDetail;
@@ -70,6 +72,8 @@ namespace Web
             services.AddTransient(typeof(IUpdateIngredientCommand), typeof(UpdateIngredientCommand));
             services.AddTransient(typeof(IStockService), typeof(NikeStockService));
             services.AddTransient(typeof(IEmailSender), typeof(EmailSender));
+            services.AddTransient(typeof(IGetEmployeesListQuery), typeof(GetEmployeesListQuery));
+            services.AddTransient(typeof(ICreateEmployeeCommand), typeof(CreateEmployeeCommand));
 
 
             services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));

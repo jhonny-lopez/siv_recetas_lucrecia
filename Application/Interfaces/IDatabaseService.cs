@@ -1,4 +1,5 @@
 ﻿using Domain.Contacts;
+using Domain.Employees;
 using Domain.Events;
 using Domain.Recipes;
 using Domain.Regions;
@@ -22,7 +23,7 @@ namespace Application.Interfaces
         DbSet<RecipeIngredient> RecipesIngredients { get; set; }
         DbSet<City> Cities { get; set; }
         DbSet<State> States { get; set; }
-
+        DbSet<Employee> Employees { get; set; }
         void Save();
     }
 }

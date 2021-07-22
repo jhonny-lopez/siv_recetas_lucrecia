@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Contacts;
+using Domain.Employees;
 using Domain.Events;
 using Domain.Recipes;
 using Domain.Regions;
@@ -33,6 +34,7 @@ namespace Persistence
         public DbSet<RecipeIngredient> RecipesIngredients { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<State> States { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
