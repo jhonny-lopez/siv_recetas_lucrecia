@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,5 +21,7 @@ namespace Web.Models.Employees
         [EmailAddress]
         [Display(Name = "Correo electrónico")]
         public string EmailAddress { get; set; }
+
+        public IFormFile ImageFile { get; set; }
     }
 }

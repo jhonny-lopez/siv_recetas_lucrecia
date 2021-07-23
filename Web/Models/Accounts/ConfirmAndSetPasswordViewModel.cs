@@ -15,6 +15,7 @@ namespace Web.Models.Accounts
         public string Code { get; set; }
 
         public string ReturnUrl { get; set; }
+        public string DisplayName { get; set; }
 
         [Display(Name = "Correo electrónico")]
         public string Email { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Web.Areas.Identity.Data;
 using Web.Data;
 
 [assembly: HostingStartup(typeof(Web.Areas.Identity.IdentityHostingStartup))]
@@ -19,8 +20,10 @@ namespace Web.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("SecurityWebContextConnection")));
 
-                services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<SecurityWebContext>();
+                services.AddIdentity<MyIdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<SecurityWebContext>()
+                    .AddDefaultTokenProviders()
+                    .AddSignInManager<SignInManager<MyIdentityUser>>();
             });
         }
     }

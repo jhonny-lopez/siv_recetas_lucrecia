@@ -7,16 +7,17 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Web.Areas.Identity.Data;
 using Web.Models.Accounts;
 
 namespace Web.Controllers
 {
     public class AccountsController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<MyIdentityUser> _userManager;
+        private readonly SignInManager<MyIdentityUser> _signInManager;
 
-        public AccountsController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountsController(UserManager<MyIdentityUser> userManager, SignInManager<MyIdentityUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -38,6 +39,7 @@ namespace Web.Controllers
             model.ReturnUrl = returnUrl;
             model.UserId = userId;
             model.Email = user.Email;
+            model.DisplayName = user.DisplayName;
 
             return View(model);
         }

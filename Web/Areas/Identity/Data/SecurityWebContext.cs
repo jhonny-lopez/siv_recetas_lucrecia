@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Web.Areas.Identity.Data;
 
 namespace Web.Data
 {
-    public class SecurityWebContext : IdentityDbContext<IdentityUser>
+    public class SecurityWebContext : IdentityDbContext<MyIdentityUser>
     {
         public SecurityWebContext(DbContextOptions<SecurityWebContext> options)
             : base(options)

@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Web.Areas.Identity.Data;
 using Web.Models.Employees;
 
 namespace Web.Controllers
@@ -20,13 +22,13 @@ namespace Web.Controllers
     {
         private readonly IGetEmployeesListQuery _listQuery;
         private readonly ICreateEmployeeCommand _createCommand;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<MyIdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly GeneralOptions _generalOptions;
 
         public EmployeesController(IGetEmployeesListQuery listQuery, 
             ICreateEmployeeCommand createCommand, 
-            UserManager<IdentityUser> userManager, 
+            UserManager<MyIdentityUser> userManager, 
             IEmailSender emailSender, 
             IOptions<GeneralOptions> generalOptions)
         {
@@ -54,14 +56,30 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateEmployeeModel model)
+        public async Task<IActionResult> Create(CreateEmployeeViewModel model)
         {
-            _createCommand.Execute(model);
+            _createCommand.Execute(new CreateEmployeeModel()
+            {
+                EmailAddress = model.EmailAddress,
+                FirstName = model.FirstName,
+                LastName = model.LastName
+            });
 
-            var identityUser = new IdentityUser();
+            var identityUser = new MyIdentityUser();
             identityUser.Email = model.EmailAddress;
             identityUser.UserName = model.EmailAddress;
             identityUser.LockoutEnabled = false;
+            identityUser.DisplayName = $"{model.FirstName} {model.LastName}";
+
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    await model.ImageFile.CopyToAsync(ms);
+
+                    identityUser.Image = Convert.ToBase64String(ms.ToArray());
+                }
+            }
 
             await _userManager.CreateAsync(identityUser);
 
