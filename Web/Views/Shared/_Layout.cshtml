@@ -22,21 +22,25 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="States" asp-action="Index">Departamentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Ciudades</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("SetLanguage", "Home", new { language = "es-CO" })">Español</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("SetLanguage", "Home", new { language = "en-US" })">English</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="States" asp-action="Index">Departamentos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Ciudades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="@Url.Action("SetLanguage", "Home", new { language = "es-CO" })">Español</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="@Url.Action("SetLanguage", "Home", new { language = "en-US" })">English</a>
+                            </li>
+                        }
+
                     </ul>
 
                     <partial name="_LoginPartial" />

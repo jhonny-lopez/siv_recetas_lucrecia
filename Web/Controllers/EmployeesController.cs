@@ -1,6 +1,7 @@
 ﻿using Application.Employees.Commands.CreateEmployee;
 using Application.Employees.Queries.GetEmployeesList;
 using Common.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using Web.Models.Employees;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class EmployeesController : Controller
     {
         private readonly IGetEmployeesListQuery _listQuery;
@@ -48,6 +50,7 @@ namespace Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             var model = new CreateEmployeeViewModel();
@@ -55,6 +58,7 @@ namespace Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateEmployeeViewModel model)
         {
@@ -82,6 +86,15 @@ namespace Web.Controllers
             }
 
             await _userManager.CreateAsync(identityUser);
+
+            if (model.IsAdmin)
+            {
+                await _userManager.AddToRoleAsync(identityUser, "Administrator");
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(identityUser, "User");
+            }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

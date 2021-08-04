@@ -1,4 +1,6 @@
 using Application.Contacts.Commands.CreateContactCommand;
+using Application.Employees.Commands.CreateEmployee;
+using Application.Employees.Commands.UpdateEmployee;
 using Application.Interfaces;
 using Application.Recipes.Queries.GetFilteredRecipesList;
 using Application.Recipes.Queries.GetRecipeDetailsQuery;
@@ -42,9 +44,11 @@ namespace Service
 
             services.AddCors(c =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+                c.AddPolicy("AllOrigins", options => options.AllowAnyOrigin());
+                c.AddPolicy("ProductionPolicy", options => options.WithOrigins("http://127.0.0.1:5500"));
             });
 
+            
             services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(IGetStatesListQuery), typeof(GetStatesListQuery), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(IGetFilteredRecipesListQuery), typeof(GetFilteredRecipesListQuery), ServiceLifetime.Transient));
@@ -52,6 +56,8 @@ namespace Service
             services.Add(new ServiceDescriptor(typeof(IGetRecipeDetailsQuery), typeof(GetRecipeDetailsQuery), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(ICreateContactCommand), typeof(CreateContactCommand), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(INotificationsFactory), typeof(NotificationsFactory), ServiceLifetime.Transient));
+            services.Add(new ServiceDescriptor(typeof(ICreateEmployeeCommand), typeof(CreateEmployeeCommand), ServiceLifetime.Transient));
+            services.Add(new ServiceDescriptor(typeof(IUpdateEmployeeCommand), typeof(UpdateEmployeeCommand), ServiceLifetime.Transient));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +66,15 @@ namespace Service
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors("AllowOrigin");
+            }
+            else if (env.IsStaging())
+            {
+
+            }
+            else if (env.IsProduction())
+            {
+                app.UseCors("ProductionPolicy");
             }
 
             app.UseHttpsRedirection();
@@ -67,8 +82,6 @@ namespace Service
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseEndpoints(endpoints =>
             {

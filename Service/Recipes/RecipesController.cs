@@ -25,18 +25,17 @@ namespace Service.Recipes
         }
 
         [Route("get")]
-        public GetFilteredRecipesListModel Get([FromQuery]RecipesFiltersModel filters)
+        public GetFilteredRecipesListModel GetRecipes([FromQuery]RecipesFiltersModel filters)
         {
-            Thread.Sleep(2000);
             var model = _filteredListQuery.Execute(filters);
 
             return model;
         }
 
-        [Route("get/{id}")]
-        public GetRecipeDetailsModel Get(int id)
+        [Route("get/{recipeId}")]
+        public GetRecipeDetailsModel Get(int recipeId)
         {    
-            var model = _detailsQuery.Execute(id);
+            var model = _detailsQuery.Execute(recipeId);
 
             return model;
         }

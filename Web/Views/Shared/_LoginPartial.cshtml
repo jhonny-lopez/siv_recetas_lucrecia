@@ -18,6 +18,10 @@
             {
                 <img src="data:image/png;base64, @user.Image" style="max-height: 100px; width:auto" alt="@user.DisplayName" />
             }
+            @if(await UserManager.IsInRoleAsync(user, "Administrator"))
+            {
+                <span class="alert alert-info">ADMIN</span>
+            }
         </a>
     </li>
     <li class="nav-item">

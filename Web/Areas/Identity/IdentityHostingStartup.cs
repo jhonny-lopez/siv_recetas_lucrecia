@@ -20,7 +20,11 @@ namespace Web.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("SecurityWebContextConnection")));
 
-                services.AddIdentity<MyIdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                services.AddIdentity<MyIdentityUser, IdentityRole>(options =>
+                    {
+                        options.SignIn.RequireConfirmedAccount = true;
+
+                    })
                     .AddEntityFrameworkStores<SecurityWebContext>()
                     .AddDefaultTokenProviders()
                     .AddSignInManager<SignInManager<MyIdentityUser>>();

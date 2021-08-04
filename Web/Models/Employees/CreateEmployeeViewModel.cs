@@ -22,6 +22,9 @@ namespace Web.Models.Employees
         [Display(Name = "Correo electrónico")]
         public string EmailAddress { get; set; }
 
+        [Display(Name = "¿Es administrador?")]
+        public bool IsAdmin { get; set; }
+
         public IFormFile ImageFile { get; set; }
     }
 }

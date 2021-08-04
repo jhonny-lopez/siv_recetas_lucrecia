@@ -23,6 +23,11 @@ namespace Web.Controllers
             _signInManager = signInManager;
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         public IActionResult ConfirmAndSetPassword(string userId, string code, string returnUrl)
         {
             var user = _userManager.Users

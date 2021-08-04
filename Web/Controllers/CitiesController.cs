@@ -1,4 +1,5 @@
 ﻿using Domain.Regions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Web.Models.Cities;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class CitiesController : Controller
     {
         public IActionResult Index([FromQuery]IndexViewModel model)
