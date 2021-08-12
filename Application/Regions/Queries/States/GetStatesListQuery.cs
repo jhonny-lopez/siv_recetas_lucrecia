@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,8 @@ namespace Application.Regions.States
                 .Select(s => new StateModel()
                 {
                     Id = s.Id,
-                    Name = s.Name
+                    Name = s.Name,
+                    Cities = s.Cities.ToList()
                 });
 
             return states.ToList();
