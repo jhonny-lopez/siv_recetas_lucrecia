@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
+using Application.Recipes.Queries.GetRecipeCategoriesList;
 
 namespace Service
 {
@@ -58,6 +60,8 @@ namespace Service
             services.Add(new ServiceDescriptor(typeof(INotificationsFactory), typeof(NotificationsFactory), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(ICreateEmployeeCommand), typeof(CreateEmployeeCommand), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(IUpdateEmployeeCommand), typeof(UpdateEmployeeCommand), ServiceLifetime.Transient));
+
+            services.AddMediatR(typeof(Application.Shared.MediatorAssemblyResolver).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

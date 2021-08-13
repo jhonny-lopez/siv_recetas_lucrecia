@@ -1,9 +1,11 @@
 ﻿using Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Application.Recipes.Queries.GetRecipeDetailsQuery
 {
@@ -16,10 +18,10 @@ namespace Application.Recipes.Queries.GetRecipeDetailsQuery
             _databaseService = databaseService;
         }
 
-        public GetRecipeDetailsModel Execute(int recipeId)
+        public async Task<GetRecipeDetailsModel> ExecuteAsync(int recipeId)
         {
             
-            var ingredients = _databaseService.RecipesIngredients
+            var ingredients = await _databaseService.RecipesIngredients
                 .Where(ri => ri.RecipeId == recipeId)
                 .Select(ri => new RecipeIngredientModel()
                 {
@@ -27,9 +29,9 @@ namespace Application.Recipes.Queries.GetRecipeDetailsQuery
                     IngredientName = ri.Ingredient.Name,
                     Quantity = ri.Quantity
                 })
-                .ToList();
+                .ToListAsync();
 
-            var model = _databaseService.Recipes
+            var model = await _databaseService.Recipes
                 .Where(it => it.Id == recipeId)
                 .Select(r => new GetRecipeDetailsModel()
                 {
@@ -40,7 +42,7 @@ namespace Application.Recipes.Queries.GetRecipeDetailsQuery
                     Name = r.Name,
                     RecipeCategoryName = r.RecipeCategory.Name
                 })
-                .Single();
+                .SingleAsync();
 
             return model;
         }

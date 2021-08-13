@@ -1,7 +1,9 @@
-﻿namespace Application.Recipes.Queries.GetRecipeDetailsQuery
+﻿using System.Threading.Tasks;
+
+namespace Application.Recipes.Queries.GetRecipeDetailsQuery
 {
     public interface IGetRecipeDetailsQuery
     {
-        GetRecipeDetailsModel Execute(int recipeId);
+        Task<GetRecipeDetailsModel> ExecuteAsync(int recipeId);
     }
 }

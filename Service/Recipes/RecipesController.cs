@@ -24,6 +24,15 @@ namespace Service.Recipes
             _detailsQuery = detailsQuery;
         }
 
+
+        //Inyección de dependencias en tiempo de compilación
+        //Inyectar una dependencia directamente proporcionando en 
+        //el constructor la implementación concreta que se va a utilizar
+        //public RecipesController()
+        //{
+        //    _detailsQuery = new GetRecipeDetailsQuery(_databaseService);
+        //}
+
         [Route("get")]
         public GetFilteredRecipesListModel GetRecipes([FromQuery]RecipesFiltersModel filters)
         {
@@ -33,11 +42,16 @@ namespace Service.Recipes
         }
 
         [Route("get/{recipeId}")]
-        public GetRecipeDetailsModel Get(int recipeId)
+        public async Task<GetRecipeDetailsModel> Get(int recipeId)
         {    
-            var model = _detailsQuery.Execute(recipeId);
-
+            var model = await _detailsQuery.ExecuteAsync(recipeId);
+            
             return model;
+        }
+
+        public async Task Calculate(int a, int b)
+        {
+
         }
     }
 }

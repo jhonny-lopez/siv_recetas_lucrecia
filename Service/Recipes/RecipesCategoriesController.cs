@@ -1,4 +1,8 @@
-﻿using Application.Recipes.Queries.GetRecipesCategoriesList;
+﻿using Application.Recipes.Commands.CreateRecipeCategoryCommand;
+using Application.Recipes.Queries.GetRecipeCategoriesList;
+using Application.Recipes.Queries.GetRecipeCategoryByIdQuery;
+using Domain.Recipes;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,17 +16,41 @@ namespace Service.Recipes
     [ApiController]
     public class RecipesCategoriesController : ControllerBase
     {
-        private readonly IGetRecipesCategoriesListQuery _listQuery;
+        private IMediator _mediator;
 
-        public RecipesCategoriesController(IGetRecipesCategoriesListQuery listQuery)
+        public RecipesCategoriesController(IMediator mediator)
         {
-            _listQuery = listQuery;
+            _mediator = mediator;
         }
 
-        [Route("get")]
-        public IEnumerable<RecipeCategoryModel> Get()
+        [HttpGet("list")]
+        public async Task<ICollection<RecipeCategory>> GetRecipesCategoriesList()
         {
-            return _listQuery.Execute();
+            var recipesCategories = await _mediator.Send(new GetRecipeCategoriesListQuery());
+
+            return recipesCategories;
+        }
+
+        [HttpGet("get/{id}")]
+        public async Task<RecipeCategory> GetRecipeCategory(int id)
+        {
+            var recipeCategory = await _mediator.Send(new GetRecipeCategoryByIdQuery()
+            {
+                Id = id
+            });
+
+            return recipeCategory;
+        }
+
+        [HttpPost("add")]
+        public async Task<IActionResult> CreateRecipeCategory([FromForm] CreateRecipeCategoryModel model)
+        {
+            await _mediator.Send(new CreateRecipeCategoryCommand()
+            {
+                Model = model
+            });
+
+            return Ok();
         }
     }
 }
