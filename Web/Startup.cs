@@ -27,6 +27,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Web.Email;
 using Web.Extensions;
+using Web.Hubs;
 
 namespace Web
 {
@@ -79,6 +80,8 @@ namespace Web
             services.Configure<SMSProviderOptions>(Configuration.GetSection(SMSProviderOptions.SectionName));
             services.Configure<MailProviderOptions>(Configuration.GetSection(MailProviderOptions.SectionName));
             services.Configure<GeneralOptions>(Configuration.GetSection(GeneralOptions.SectionName));
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,7 +98,6 @@ namespace Web
                 app.UseHsts();
             }
 
-            
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -118,6 +120,7 @@ namespace Web
                 });
                 endpoints.MapHealthChecksUI();
                 endpoints.MapRazorPages();
+                endpoints.MapHub<StatesRealTimeHub>("/statesHub");
             });
         }
     }

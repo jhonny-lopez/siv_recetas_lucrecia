@@ -1,17 +1,26 @@
 ﻿using Domain.Regions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Hubs;
 using Web.Models.States;
 
 namespace Web.Controllers
 {
     public class StatesController : Controller
     {
+        private readonly IHubContext<StatesRealTimeHub> _hubContext;
+
+        public StatesController(IHubContext<StatesRealTimeHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         public IActionResult Index()
         {
             IndexViewModel model = new IndexViewModel();
@@ -60,6 +69,9 @@ namespace Web.Controllers
             databaseContext.States.Add(state);
 
             databaseContext.SaveChanges();
+
+            _hubContext.Clients.All.SendAsync("UpdateStatesTable",
+                $"Se ha creado un nuevo departamento.", state.Name);
 
             return RedirectToAction("Index", "States");
         }

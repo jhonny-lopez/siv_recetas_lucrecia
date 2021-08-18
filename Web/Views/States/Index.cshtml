@@ -9,6 +9,10 @@
 <h1>Departamentos</h1>
 <p>Aquí aparecerán listados los departamentos de mi base de datos.</p>
 
+<div class="realTimeMessages">
+
+</div>
+
 <a class="btn btn-outline-secondary" href="@Url.Action("Create", "States")">Agregar departamento</a>
 
 <table class="table table-bordered table-striped">
@@ -36,4 +40,17 @@
     </tbody>
 </table> 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.js"></script>
+<script type="text/javascript">
+    var connection = new signalR.HubConnectionBuilder().withUrl('/statesHub').build();
+    
+    connection.start().then(function () {
+        console.log('Connection started');
+    });
 
+    connection.on("UpdateStatesTable", function (message, stateName) {
+        document.querySelector('.realTimeMessages').innerHTML = '<div class="alert alert-warning"><p>' + message + '</p><p>Nombr del departamento: ' + stateName + '</p ></div > ';
+    });
+
+
+</script>
