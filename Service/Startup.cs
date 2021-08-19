@@ -23,6 +23,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Application.Recipes.Queries.GetRecipeCategoriesList;
+using Application.Events.Commands.CreateEventWithDTO;
+using Application.Events.Commands.CreateEventWithoutDTO;
+using Application.Events.Queries.GetEventDetailsById;
 
 namespace Service
 {
@@ -50,6 +53,7 @@ namespace Service
                 c.AddPolicy("ProductionPolicy", options => options.WithOrigins("http://127.0.0.1:5500"));
             });
 
+            services.AddAutoMapper(typeof(Startup));
             
             services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(IGetStatesListQuery), typeof(GetStatesListQuery), ServiceLifetime.Transient));
@@ -60,6 +64,11 @@ namespace Service
             services.Add(new ServiceDescriptor(typeof(INotificationsFactory), typeof(NotificationsFactory), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(ICreateEmployeeCommand), typeof(CreateEmployeeCommand), ServiceLifetime.Transient));
             services.Add(new ServiceDescriptor(typeof(IUpdateEmployeeCommand), typeof(UpdateEmployeeCommand), ServiceLifetime.Transient));
+            
+            services.AddTransient(typeof(ICreateEventWithDTOCommand), typeof(CreateEventWithDTOCommand));
+            services.AddTransient(typeof(ICreateEventCommandWithoutDTO), typeof(CreateEventCommand));
+            services.AddTransient(typeof(IGetEventDetailsByIdQuery), typeof(GetEventDetailsByIdQuery));
+            services.AddTransient(typeof(IGetEventDetailsByIdQuery), typeof(GetEventDetailsByIdQuery));
 
             services.AddMediatR(typeof(Application.Shared.MediatorAssemblyResolver).Assembly);
         }
