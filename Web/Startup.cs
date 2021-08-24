@@ -45,26 +45,26 @@ namespace Web
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddHealthChecks()
-                .AddSqlServer(Configuration["ConnectionStrings:RecetasLucrecia"], 
-                "SELECT 1",
-                "Database");
-            services.AddHealthChecksUI()
-                .AddInMemoryStorage();
+            //services.AddHealthChecks()
+            //    .AddSqlServer(Configuration["ConnectionStrings:RecetasLucrecia"], 
+            //    "SELECT 1",
+            //    "Database");
+            //services.AddHealthChecksUI()
+            //    .AddInMemoryStorage();
 
             services.AddDbContext<DatabaseService>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("RecetasLucrecia"))
             );
 
-            string appKey = Configuration.GetValue<string>("General:SMSProvider:AppKey");
-            bool isBillingEnabled = Configuration.GetValue<bool>("IsBillingEnabled");
-            int defaultPort = Configuration.GetValue<int>("DefaultPort");
+            //string appKey = Configuration.GetValue<string>("General:SMSProvider:AppKey");
+            //bool isBillingEnabled = Configuration.GetValue<bool>("IsBillingEnabled");
+            //int defaultPort = Configuration.GetValue<int>("DefaultPort");
 
-            string appName = Configuration.GetValue<string>("ApplicationName");
+            //string appName = Configuration.GetValue<string>("ApplicationName");
 
-            string customerName = Configuration.GetValue<string>("Customer:Name");
-            string customerNit = Configuration.GetValue<string>("Customer:NIT");
-            string otherConnectionString = Configuration.GetValue<string>("ASPNETCORE_CONNECTIONSTRING");
+            //string customerName = Configuration.GetValue<string>("Customer:Name");
+            //string customerNit = Configuration.GetValue<string>("Customer:NIT");
+            //string otherConnectionString = Configuration.GetValue<string>("ASPNETCORE_CONNECTIONSTRING");
 
             services.Add(new ServiceDescriptor(typeof(IDatabaseService), typeof(DatabaseService), ServiceLifetime.Transient));
             services.AddTransient(typeof(IGetIngredientsQuery), typeof(GetIngredientsQuery));
@@ -81,7 +81,7 @@ namespace Web
             services.Configure<MailProviderOptions>(Configuration.GetSection(MailProviderOptions.SectionName));
             services.Configure<GeneralOptions>(Configuration.GetSection(GeneralOptions.SectionName));
 
-            services.AddSignalR();
+            //services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,13 +114,13 @@ namespace Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapHealthChecks("/api/health", new HealthCheckOptions
-                {
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
-                endpoints.MapHealthChecksUI();
-                endpoints.MapRazorPages();
-                endpoints.MapHub<StatesRealTimeHub>("/statesHub");
+                //endpoints.MapHealthChecks("/api/health", new HealthCheckOptions
+                //{
+                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                //});
+                //endpoints.MapHealthChecksUI();
+                //endpoints.MapRazorPages();
+                //endpoints.MapHub<StatesRealTimeHub>("/statesHub");
             });
         }
     }

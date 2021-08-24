@@ -26,6 +26,10 @@ using Application.Recipes.Queries.GetRecipeCategoriesList;
 using Application.Events.Commands.CreateEventWithDTO;
 using Application.Events.Commands.CreateEventWithoutDTO;
 using Application.Events.Queries.GetEventDetailsById;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Service.Security;
 
 namespace Service
 {
@@ -71,6 +75,22 @@ namespace Service
             services.AddTransient(typeof(IGetEventDetailsByIdQuery), typeof(GetEventDetailsByIdQuery));
 
             services.AddMediatR(typeof(Application.Shared.MediatorAssemblyResolver).Assembly);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
+
+            services.AddTransient(typeof(ITokenService), typeof(TokenService));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

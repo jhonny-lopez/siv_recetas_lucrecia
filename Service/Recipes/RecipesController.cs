@@ -1,7 +1,10 @@
 ﻿using Application.Recipes.Queries.GetFilteredRecipesList;
 using Application.Recipes.Queries.GetRecipeDetailsQuery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Service.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +19,16 @@ namespace Service.Recipes
     {
         private readonly IGetFilteredRecipesListQuery _filteredListQuery;
         private readonly IGetRecipeDetailsQuery _detailsQuery;
+        private readonly ITokenService _tokenService;
+        private readonly IConfiguration _config;
 
-        public RecipesController(IGetFilteredRecipesListQuery filteredListQuery, 
-            IGetRecipeDetailsQuery detailsQuery)
+        public RecipesController(IGetFilteredRecipesListQuery filteredListQuery,
+            IGetRecipeDetailsQuery detailsQuery, ITokenService tokenService, IConfiguration config)
         {
             _filteredListQuery = filteredListQuery;
             _detailsQuery = detailsQuery;
+            _tokenService = tokenService;
+            _config = config;
         }
 
 
@@ -34,11 +41,28 @@ namespace Service.Recipes
         //}
 
         [Route("get")]
-        public GetFilteredRecipesListModel GetRecipes([FromQuery]RecipesFiltersModel filters)
+        [Authorize]
+        public IActionResult GetRecipes([FromQuery]RecipesFiltersModel filters)
         {
-            var model = _filteredListQuery.Execute(filters);
+            string token = HttpContext.Request.Headers["Authorization"];
 
-            return model;
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+
+            var securityKey = _config["Jwt:Key"];
+            var issuer = _config["Jwt:Issuer"];
+
+            if (_tokenService.ValidateToken(securityKey, issuer, token)) {
+                var model = _filteredListQuery.Execute(filters);
+
+                return Ok(model);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         [Route("get/{recipeId}")]
